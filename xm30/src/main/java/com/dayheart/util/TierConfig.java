@@ -468,6 +468,35 @@ public class TierConfig {
 		return this.mciPort;
 	}
 
+	public String getUri(String tier) {
+		String tiervalue = null;
+		switch(tier) {
+		case "MCI" : 
+			tiervalue = this.mciUri;
+			break;
+		case "ESB" :
+			tiervalue = this.esbUri;
+			break;
+		case "COR" :
+			tiervalue = this.corUri;
+			break;
+		case "EAI" :
+			tiervalue = this.eaiUri;
+			break;
+		case "API" :
+			tiervalue = this.apiUri;
+			break;
+		case "FEP" :
+			tiervalue = this.fepUri;
+			break;
+		default :
+			tiervalue = this.mciUri;
+			break;
+		
+		}
+		return props.getProperty(tier+".URI", tiervalue);
+	}
+	
 	public String getMciUri() {
 		return props.getProperty("MCI.URI", this.mciUri);
 	}
