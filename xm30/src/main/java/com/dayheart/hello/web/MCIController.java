@@ -98,10 +98,9 @@ public class MCIController {
 				for(String s: egresses) {
 					XLog.stdout(String.format("[%d]: %s", i++, s));
 				}
-				
-				
 			} else if(path.startsWith("/esb")) {
 				tier = "ESB";
+				
 			} else if(path.startsWith("/cor")) {
 				tier = "COR";
 			} else if(path.startsWith("/eai")) {

@@ -374,15 +374,86 @@ public class TierConfig {
 		
 	} // end of the Constructor
 
+	public String getProtocol(String tier) {
+		String tiervalue = null;
+		switch(tier) {
+		case "MCI" : 
+			tiervalue = this.mciProtocol;
+			break;
+		case "ESB" :
+			tiervalue = this.esbProtocol;
+			break;
+		case "COR" :
+			tiervalue = this.corProtocol;
+			break;
+		case "EAI" :
+			tiervalue = this.eaiProtocol;
+			break;
+		case "API" :
+			tiervalue = this.apiProtocol;
+			break;
+		case "FEP" :
+			tiervalue = this.fepProtocol;
+			break;
+		default :
+			tiervalue = this.mciProtocol;
+			break;
+		
+		}
+		return props.getProperty(tier+".POROTOCOL", tiervalue);
+	}
+	
 	public String getMciProtocol() {
 		return props.getProperty("MCI.PROTOCOL", this.mciProtocol);
 	}
-
+	
+	public String getHost(String tier) {
+		return props.getProperty(tier+"HOST");
+	}
 	public String getMciHost() {
 		return props.getProperty("MCI.HOST", this.mciHost);
 		
 	}
 
+	public int getPort(String tier) {
+		int tiervalue = 0;
+		switch(tier) {
+		case "MCI" : 
+			tiervalue = this.mciPort;
+			break;
+		case "ESB" :
+			tiervalue = this.esbPort;
+			break;
+		case "COR" :
+			tiervalue = this.corPort;
+			break;
+		case "EAI" :
+			tiervalue = this.eaiPort;
+			break;
+		case "API" :
+			tiervalue = this.apiPort;
+			break;
+		case "FEP" :
+			tiervalue = this.fepPort;
+			break;
+		default :
+			tiervalue = this.mciPort;
+			break;
+		
+		}
+		String port = props.getProperty(tier+".PORT");
+		
+		if(port!=null) {
+			try {
+				return Integer.parseInt(port);
+			}catch (NumberFormatException nfe) {
+				// TODO: handle exception
+				System.out.println(nfe);
+				return tiervalue;
+			}
+		} 
+		return tiervalue;
+	}
 	public int getMciPort() {
 		String port = props.getProperty("MCI.PORT");
 		if(port!=null) {
