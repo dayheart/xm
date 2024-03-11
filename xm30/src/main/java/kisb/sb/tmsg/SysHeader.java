@@ -12,6 +12,9 @@ import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.UUID;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.dayheart.util.XLog;
 import com.dayheart.util.ThreadCpuTime;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -97,6 +100,8 @@ public enum SysHeader {
 	private int len;
 	private String ko;
 	private String desc;
+	
+	//private static final Logger logger = LogManager.getLogger(SysHeader.class);
 	
 	private SysHeader(int offset, int len, String ko, String desc) {
 		this.offset = offset;
@@ -605,6 +610,7 @@ public enum SysHeader {
 		try {
 			ip = InetAddress.getLocalHost();
 			ipstr = ip.getHostAddress();
+			
 			NetworkInterface nic = NetworkInterface.getByInetAddress(ip);
 			byte[] mac = nic.getHardwareAddress();
 			
@@ -616,6 +622,8 @@ public enum SysHeader {
 			se.printStackTrace();
 		} catch (UnknownHostException uke) {
 			uke.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 		
 		/* 요청시스템정보 */
@@ -646,8 +654,10 @@ public enum SysHeader {
 		StringBuilder macSb = new StringBuilder();
 		try {
 			ip = InetAddress.getLocalHost();
+			System.out.println(String.format("LOCALHOST_ADDR:[%s]", ip));
 			ipstr = ip.getHostAddress();
 			NetworkInterface nic = NetworkInterface.getByInetAddress(ip);
+			System.out.println(String.format("LOCALHOST_NETIF:[%s]", nic));
 			byte[] mac = nic.getHardwareAddress();
 			
 			for(int i=0; i<mac.length; i++) {
