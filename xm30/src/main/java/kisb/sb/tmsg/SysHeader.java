@@ -654,15 +654,20 @@ public enum SysHeader {
 		StringBuilder macSb = new StringBuilder();
 		try {
 			ip = InetAddress.getLocalHost();
+			
 			System.out.println(String.format("LOCALHOST_ADDR:[%s]", ip));
 			ipstr = ip.getHostAddress();
 			NetworkInterface nic = NetworkInterface.getByInetAddress(ip);
 			System.out.println(String.format("LOCALHOST_NETIF:[%s]", nic));
-			byte[] mac = nic.getHardwareAddress();
 			
-			for(int i=0; i<mac.length; i++) {
-				macSb.append( String.format("%02X%s", mac[i], (i<mac.length-1)?"-":"") );
+			byte[] mac = nic.getHardwareAddress();
+			// mac == null 127.0.0.1
+			if(mac!=null) {
+				for(int i=0; i<mac.length; i++) {
+					macSb.append( String.format("%02X%s", mac[i], (i<mac.length-1)?"-":"") );
+				}
 			}
+			
 			
 		} catch (SocketException se) {
 			se.printStackTrace();
