@@ -1,5 +1,6 @@
 package com.dayheart.util;
 
+import java.lang.reflect.Field;
 import java.util.Properties;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -400,7 +401,7 @@ public class TierConfig {
 			break;
 		
 		}
-		return props.getProperty(tier+".POROTOCOL", tiervalue);
+		return props.getProperty(tier.toUpperCase()+".POROTOCOL", tiervalue);
 	}
 	
 	public String getMciProtocol() {
@@ -408,7 +409,32 @@ public class TierConfig {
 	}
 	
 	public String getHost(String tier) {
-		return props.getProperty(tier+"HOST");
+		String tiervalue = null;
+		switch(tier) {
+		case "MCI" : 
+			tiervalue = this.mciHost;
+			break;
+		case "ESB" :
+			tiervalue = this.esbHost;
+			break;
+		case "COR" :
+			tiervalue = this.corHost;
+			break;
+		case "EAI" :
+			tiervalue = this.eaiHost;
+			break;
+		case "API" :
+			tiervalue = this.apiHost;
+			break;
+		case "FEP" :
+			tiervalue = this.fepHost;
+			break;
+		default :
+			tiervalue = this.mciHost;
+			break;
+		
+		}
+		return props.getProperty(tier.toUpperCase()+".HOST", tiervalue);
 	}
 	public String getMciHost() {
 		return props.getProperty("MCI.HOST", this.mciHost);
@@ -502,6 +528,42 @@ public class TierConfig {
 		return props.getProperty("MCI.URI", this.mciUri);
 	}
 	
+	
+	public String[] getUris(String tier) {
+		
+		tier = tier.toLowerCase();
+		
+		try {
+			Field urisField = this.getClass().getDeclaredField(tier + "Uris");
+			
+			urisField.setAccessible(true);
+			Object uris  = urisField.get(this);
+			
+			Field uriField = this.getClass().getDeclaredField(tier + "Uri");
+			uriField.setAccessible(true);
+			Object uri = uriField.get(this);
+			
+			if(uris!=null) {
+				return (String[])uris;
+			} else if(uri!=null) {
+				String s = (String)uri;
+				if(s.indexOf(",")>-1) {
+					urisField.set(this, s.split(","));
+					return (String[])urisField.get(this);
+				}
+				urisField.set(this, new String[] { s });
+				return (String[])urisField.get(this);
+			}
+			
+		} catch (NoSuchFieldException e) {
+			System.out.println(e.toString());
+		} catch (IllegalAccessException illegalEx) {
+			System.out.println(illegalEx.toString());
+		}
+		
+		return null;
+	}
+	
 	public String[] getMciUris() {
 		if(mciUris!=null) {
 			return this.mciUris;
@@ -516,8 +578,49 @@ public class TierConfig {
 		return null;
 	}
 
+	public String getOut(String tier) {
+		
+		tier = tier.toLowerCase();
+		
+		try {
+			Field field = this.getClass().getDeclaredField(tier + "Out");
+			
+			field.setAccessible(true);
+			Object out  = field.get(this);
+			
+			return props.getProperty(tier.toUpperCase()+".OUT", (String)out);
+			
+		} catch (NoSuchFieldException e) {
+			System.out.println(e.toString());
+		} catch (IllegalAccessException illegalEx) {
+			System.out.println(illegalEx.toString());
+		}
+		
+		return null;
+	}
 	public String getMciOut() {
 		return props.getProperty("MCI.OUT", this.mciOut);
+	}
+
+	public String getEgress(String tier) {
+		
+		tier = tier.toLowerCase();
+		
+		try {
+			Field field = this.getClass().getDeclaredField(tier + "Egress");
+			
+			field.setAccessible(true);
+			Object out  = field.get(this);
+			
+			return props.getProperty(tier.toUpperCase()+".EGRESS", (String)out);
+			
+		} catch (NoSuchFieldException e) {
+			System.out.println(e.toString());
+		} catch (IllegalAccessException illegalEx) {
+			System.out.println(illegalEx.toString());
+		}
+		
+		return null;
 	}
 
 	public String getMciEgress() {

@@ -90,7 +90,7 @@ public class MCIController {
 			String[] toHosts = null;
 			if(path.startsWith("/mci")) {
 				tier = "MCI";
-				egress = tierConf.getMciEgress();
+				egress = tierConf.getEgress(tier);
 				XLog.stdout(String.format("EGRESS %s", egress));
 				egresses = egress.split(",");
 				
