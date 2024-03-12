@@ -30,6 +30,27 @@ public class OutBoundConnector {
 			String mciOut = tierConfig.getOut("MCI");
 			String mciProtocol = tierConfig.getProtocol("MCI");
 			String mciEgress = tierConfig.getEgress("MCI");
+						
+			String[] egresses = null;
+			if(mciEgress.indexOf(",")>-1) {
+				egresses = mciEgress.split(",");
+				
+				for(String egress : egresses) {
+					String EGRESS = egress.toUpperCase();
+					
+					String protocol = tierConfig.getProtocol(EGRESS);
+					String host = tierConfig.getHost(EGRESS);
+					int port = tierConfig.getPort(EGRESS);
+					String uri = tierConfig.getUri(EGRESS);
+					String[] uris = tierConfig.getUris(egress);
+					
+					if(protocol.toUpperCase().equals("HTTP")) {
+						
+					}
+					
+					
+				}
+			}
 			
 			
 			

@@ -375,9 +375,9 @@ public class TierConfig {
 		
 	} // end of the Constructor
 
-	public String getProtocol(String tier) {
+	public String getProtocol(String TIER) {
 		String tiervalue = null;
-		switch(tier) {
+		switch(TIER) {
 		case "MCI" : 
 			tiervalue = this.mciProtocol;
 			break;
@@ -401,16 +401,16 @@ public class TierConfig {
 			break;
 		
 		}
-		return props.getProperty(tier.toUpperCase()+".POROTOCOL", tiervalue);
+		return props.getProperty(TIER.toUpperCase()+".POROTOCOL", tiervalue);
 	}
 	
 	public String getMciProtocol() {
 		return props.getProperty("MCI.PROTOCOL", this.mciProtocol);
 	}
 	
-	public String getHost(String tier) {
+	public String getHost(String TIER) {
 		String tiervalue = null;
-		switch(tier) {
+		switch(TIER) {
 		case "MCI" : 
 			tiervalue = this.mciHost;
 			break;
@@ -434,16 +434,16 @@ public class TierConfig {
 			break;
 		
 		}
-		return props.getProperty(tier.toUpperCase()+".HOST", tiervalue);
+		return props.getProperty(TIER.toUpperCase()+".HOST", tiervalue);
 	}
 	public String getMciHost() {
 		return props.getProperty("MCI.HOST", this.mciHost);
 		
 	}
 
-	public int getPort(String tier) {
+	public int getPort(String TIER) {
 		int tiervalue = 0;
-		switch(tier) {
+		switch(TIER) {
 		case "MCI" : 
 			tiervalue = this.mciPort;
 			break;
@@ -467,7 +467,7 @@ public class TierConfig {
 			break;
 		
 		}
-		String port = props.getProperty(tier+".PORT");
+		String port = props.getProperty(TIER.toUpperCase()+".PORT");
 		
 		if(port!=null) {
 			try {
@@ -495,9 +495,9 @@ public class TierConfig {
 	}
 
 	// 2024.03.05
-	public String getUri(String tier) {
+	public String getUri(String TIER) {
 		String tiervalue = null;
-		switch(tier) {
+		switch(TIER) {
 		case "MCI" : 
 			tiervalue = this.mciUri;
 			break;
@@ -521,7 +521,7 @@ public class TierConfig {
 			break;
 		
 		}
-		return props.getProperty(tier+".URI", tiervalue);
+		return props.getProperty(TIER.toUpperCase()+".URI", tiervalue);
 	}
 	
 	public String getMciUri() {
