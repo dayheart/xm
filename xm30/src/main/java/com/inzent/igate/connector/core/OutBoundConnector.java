@@ -4,7 +4,10 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.dayheart.tmsg.TransactionRamp;
+import com.dayheart.util.TierConfig;
 import com.dayheart.util.XLog;
 import com.inzent.igate.adapter.AdapterParameter;
 import com.inzent.igate.connector.IGateConnectorException;
@@ -16,13 +19,19 @@ public class OutBoundConnector {
 	
 	private TransactionRamp txRamp = TransactionRamp.getInstance(false); // 싱글톤
 	
+	@Autowired
+	private TierConfig tierConfig;
+	
 	public void callService(AdapterParameter adapterParameter) throws IGateConnectorException {
 		
 		try {
 			String url = null;
 			
-			String mciProtocol = txRamp.getMciProtocol();
-			String mciOut = txRamp.getMciOut();
+			String mciOut = tierConfig.getOut("MCI");
+			String mciProtocol = tierConfig.getProtocol("MCI");
+			String mciEgress = tierConfig.getEgress("MCI");
+			
+			
 			
 			String corProtocol = txRamp.getCorProtocol();
 			String corHost = txRamp.getCorHost();
