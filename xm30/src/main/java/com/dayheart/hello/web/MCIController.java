@@ -3,6 +3,7 @@ package com.dayheart.hello.web;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.HandlerMapping;
 
 import com.dayheart.tcp.TCPClient;
+import com.dayheart.tmsg.TransactionRamp;
 import com.dayheart.util.TierConfig;
 import com.dayheart.util.XLog;
 import com.inzent.igate.adapter.AdapterParameter;
@@ -30,18 +32,113 @@ import kisb.sb.tmsg.TelegramMessageUtil;
 @Controller
 public class MCIController {
 	
+	private TransactionRamp txRamp = TransactionRamp.getInstance(false); // 싱글톤
+	
 	@Autowired
-	private TierConfig tierConf;
+	private TierConfig tierConfig;
 	
 	public MCIController() {
 		
 	}
 	
-	@RequestMapping({"/mci/**", "/esb/**", "/cor/**", "/eai/**", "/fep/**", "/apim/**"})
-	//@RequestMapping({"/mci/**"})
+	@RequestMapping({"**/esb/**"})
+	public void esbRequestHandler(HttpServletRequest request, HttpServletResponse response) throws IOException {
+		String path = (String)request.getAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE);
+		
+		String contentType = request.getContentType();
+		
+		String tier = "ESB";
+		String url = null;
+		String out = tierConfig.getOut(tier);
+		
+		String[] egresses = null;
+		String EGRESS = tierConfig.getEgress(tier);
+		String protocol;
+		String host;
+		int port = 0;
+		
+		if(contentType!=null) {
+			
+			byte[] rcv_sysHeader = null;
+			byte[] b_body = TCPClient.retrieveBodyToBytes(request.getInputStream());
+			
+			Map<String, Object> map = new HashMap<>();
+			
+			if( contentType.equalsIgnoreCase("application/json") ) {
+				rcv_sysHeader = SysHeader.toBytes(SysHeader.flatJson(new String(b_body)));
+				SysHeader.toBytesPretty(new String(b_body));
+				
+				
+			} else if(contentType.equalsIgnoreCase("application/octet-stream")) {
+				rcv_sysHeader = new byte[b_body.length];
+				System.arraycopy(b_body, 0, rcv_sysHeader, 0, b_body.length);
+				
+				map = SysHeader.toMap(rcv_sysHeader);
+				map.put(SysHeader.TRSMT_LINK_SYS_SECD.name(), "ESB");
+				/*
+				map.put(SysHeader.TRSMT_NODE_NO.name(), "ESB");
+				map.put(SysHeader.DMND_RSPNS_SECD.name(), "ESB");
+				map.put(SysHeader.TMSG_SYNCZ_SECD.name(), "ESB");
+				map.put(SysHeader.TMSG_TRSMT_DT.name(), "ESB");
+				*/
+				
+				
+				if(EGRESS.indexOf(",")>-1) {
+					egresses = EGRESS.split(",");
+					
+					for(String egress : egresses) {
+						
+						protocol = tierConfig.getProtocol(egress.toUpperCase());
+						host = tierConfig.getHost(egress.toUpperCase());
+						port = tierConfig.getPort(egress.toUpperCase());
+						
+						if(protocol.toUpperCase().equals("HTTP")) {
+
+							//String uri = tierConfig.getUri(EGRESS);
+							String[] uris = tierConfig.getUris(egress);
+							
+							for(String uri:uris) {
+								url = String.format("%s://%s:%d%s", protocol, host, port, uri);
+								
+								txRamp.transmit(url, "POST", SysHeader.toBytes(map));
+							}	
+						}
+					}
+				} else {
+					//EGRESS = mciEgress.toUpperCase();
+					protocol = tierConfig.getProtocol(EGRESS);
+					host = tierConfig.getHost(EGRESS);
+					port = tierConfig.getPort(EGRESS);
+					
+					if(protocol.toUpperCase().equals("HTTP")) {
+
+						String uri = tierConfig.getUri(EGRESS);
+						url = String.format("%s://%s:%d%s", protocol, host, port, uri);
+							
+						txRamp.transmit(url, "POST", SysHeader.toBytes(map));	
+					}
+				}
+				
+				
+			} else if(contentType.equalsIgnoreCase("application/xml")) {
+				rcv_sysHeader = b_body;
+			} else if(contentType.equalsIgnoreCase("text/html")) {
+				
+			} else {
+				; // and so on
+			}
+			
+			
+			
+		} // end of contentType
+		
+	}
+	
+	//@RequestMapping({"/**"})
+	@RequestMapping({"**/mci/**"})
 	public void handleRequest(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		String path = (String)request.getAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE);
-		//System.out.println(path); // like /mci/cruzlink
+		System.out.println(path); // like /mci/cruzlink
 
 		
 		String contentType = request.getContentType();
@@ -55,6 +152,7 @@ public class MCIController {
 			
 			if( contentType.equalsIgnoreCase("application/json") ) {
 				rcv_sysHeader = SysHeader.toBytes(SysHeader.flatJson(new String(b_body)));
+				
 				SysHeader.toBytesPretty(new String(b_body));
 				
 			} else if(contentType.equalsIgnoreCase("application/octet-stream")) {
@@ -80,46 +178,12 @@ public class MCIController {
 			
 			// for FEP FEP header 120byte + sys_header, ex) 120byte(anylink header)
 			byte[] req_sysHeader = null;
-			req_sysHeader = new byte[1057];
+			req_sysHeader = new byte[rcv_sysHeader.length];
 			//System.arraycopy(rcv_sysHeader, 0, req_sysHeader, 0, SysHeader.getLength());
-			System.arraycopy(rcv_sysHeader, 0, req_sysHeader, 0, 1057);
+			System.arraycopy(rcv_sysHeader, 0, req_sysHeader, 0, rcv_sysHeader.length);
 			
-			String tier = null;
-			String egress = null;
-			String[] egresses = null; 
-			String[] toHosts = null;
-			if(path.startsWith("/mci")) {
-				tier = "MCI";
-				egress = tierConf.getEgress(tier);
-				XLog.stdout(String.format("EGRESS %s", egress));
-				egresses = egress.split(",");
-				
-				int i = 0;
-				for(String s: egresses) {
-					XLog.stdout(String.format("[%d]: %s", i++, s));
-				}
-			} else if(path.startsWith("/esb")) {
-				tier = "ESB";
-				
-			} else if(path.startsWith("/cor")) {
-				tier = "COR";
-			} else if(path.startsWith("/eai")) {
-				tier = "EAI";
-			} else if(path.startsWith("/fep")) {
-				tier = "FEP";
-			} else if(path.startsWith("/apim")) {
-				tier = "API";
-			}
-			
-			
-			if(tier!=null) {
-				
-				tierConf.getMciEgress();
-			}
-			
-						
 			try {
-				String mciOut = tierConf.getMciOut();
+				String mciOut = tierConfig.getMciOut();
 				
 				SocketConnector connector = null;
 				AdapterParameter adapterParameter = new AdapterParameter();

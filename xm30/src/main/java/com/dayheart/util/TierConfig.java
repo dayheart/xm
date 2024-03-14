@@ -149,8 +149,15 @@ public class TierConfig {
 	
 	private Properties props = System.getProperties();
 	
+	private static TierConfig instance;
+	
+	public static TierConfig getInstance() {
+		return instance;
+	}
+	
 	public TierConfig() {
-		super();
+		
+		instance = this;
 		// TODO Auto-generated constructor stub
 		
 		//Thread.dumpStack();

@@ -1,8 +1,10 @@
 package com.dayheart.tmsg;
 
+import java.awt.print.Printable;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.Properties;
 
 import com.dayheart.tcp.TCPClient;
@@ -173,15 +175,66 @@ public class TransactionRamp {
 	 * @param req_tmsg HTTP 요청 바디
 	 * @return HTTP 응답
 	 */
-	public byte[] transmit(String url, String method, byte[] req_tmsg) {
+	public byte[] transmit(String url, String method, byte[] message) {
 		
 		byte[] response;
 		
-		response = TCPClient.executeBytesByApacheHttpClient(url, method, req_tmsg);
+		response = TCPClient.executeBytesByApacheHttpClient(url, method, message);
 		// check null
 		
 		return response; 
 	}
+	
+	
+	public byte[] transmit(String contentType, String url, String method, byte[] message) {
+		byte[] response = null;
+		
+		try {
+			switch(contentType) {
+			case "application/octet-stream" :
+				response = TCPClient.executeBytesByApacheHttpClient(url, method, message); 
+				break;
+			case "application/xml" :
+				String xml = TCPClient.executeXmlByApacheHttpClient(url, method, new String(message, "UTF-8"));
+				response = (xml==null)?new byte[0]:xml.getBytes("UTF-8");
+				break;
+			default :
+				String json = TCPClient.executeJsonByApacheHttpClient(url, method, new String(message, "UTF-8"));
+				response = (json==null)?new byte[0]:json.getBytes("UTF-8");
+				break;			
+			}
+		}catch (UnsupportedEncodingException uee) {
+			uee.printStackTrace();
+		}
+		
+		
+		return response;
+	}
+	
+	public String transmit(String contentType, String url, String method, String message) {
+		
+		String response = null;
+		
+		try {
+			switch(contentType) {
+			case "application/octet-stream" :
+				byte[] octet = TCPClient.executeBytesByApacheHttpClient(url, method, message.getBytes("UTF-8"));
+				response = new String(octet);
+				break;
+			case "application/xml" :
+				response = TCPClient.executeXmlByApacheHttpClient(url, method, message);
+				break;
+			default :
+				response = TCPClient.executeJsonByApacheHttpClient(url, method, message);
+				break;			
+			}
+		}catch (UnsupportedEncodingException uee) {
+			uee.printStackTrace();
+		}
+		
+		return response; 
+	}
+	
 	
 	public String getMciProtocol() {
 		return mciProtocol;

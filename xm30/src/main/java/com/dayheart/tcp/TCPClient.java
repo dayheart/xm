@@ -144,6 +144,9 @@ public class TCPClient {
 	 */
 	public static String executeByApacheHttpClient(String url, String method, Map<String, String> headers, String stringEntity) {
 		
+		
+		System.out.println(String.format("###### URL [%s]", url));
+		
 		CloseableHttpClient httpClient = HttpClients.createDefault();
 		CloseableHttpResponse response = null;
 		
@@ -217,6 +220,7 @@ public class TCPClient {
 	 */
 	public static byte[] executeByApacheHttpClient(String url, String method, Map<String, String> headers, byte[] bytesEntity) {
 		
+		XLog.stdout("FORWARD URL [" + url + "]");
 		XLog.stdout("METHOD [" + method + "]");
 		
 		CloseableHttpClient httpClient = HttpClients.createDefault();

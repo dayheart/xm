@@ -16,7 +16,7 @@ public class ProductController {
 	@Autowired
 	private TierConfig tier;
 	
-	@RequestMapping("/chl/products")
+	@RequestMapping("**/products")
 	public String homePage(HttpServletRequest request, Model model) {
 		
 		String contextPath = request.getContextPath();
