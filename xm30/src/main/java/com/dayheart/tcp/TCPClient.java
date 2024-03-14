@@ -145,7 +145,7 @@ public class TCPClient {
 	public static String executeByApacheHttpClient(String url, String method, Map<String, String> headers, String stringEntity) {
 		
 		
-		System.out.println(String.format("###### URL [%s]", url));
+		//System.out.println(String.format("###### URL [%s]", url));
 		
 		CloseableHttpClient httpClient = HttpClients.createDefault();
 		CloseableHttpResponse response = null;

@@ -73,28 +73,23 @@ public class ProductRestController {
 				String[] uris = tierConf.getMciUris();
 				url += uris[i];
 				
-				XLog.stdout("MCI_URI: " + url);
+				String uri = uris[i];
+				//XLog.stdout("MCI_URI: " + url);
 				
-				switch(i) {
-				case 0:
+				if(uri.endsWith("json")) {
 					responseStr = TCPClient.executeJsonByApacheHttpClient(url, "POST", SysHeader.toJsonString(sysHeader));
-					break;
-				case 1:
-				case 2:
-				default:
+				} else {
 					responseStr = new String( TCPClient.executeBytesByApacheHttpClient(url, "POST", SysHeader.toBytes(sysHeader)));
-					//responseStr = TCPClient.executeXmlByApacheHttpClient(url, "POST", SysHeader.toXmlString(sysHeader));
-				
 				}
 				
 			} else {
 				url += tierConf.getMciUri();
 				
-				responseStr = TCPClient.executeJsonByApacheHttpClient(url, "POST", SysHeader.toJsonString(sysHeader));
+				responseStr = new String( TCPClient.executeBytesByApacheHttpClient(url, "POST", SysHeader.toBytes(sysHeader)));
 			}
 		}
 		XLog.stdout(String.format("%s-%s", mfrId, productId));
-		XLog.stdout(usingJdbcTemplateOfficeService.retrieveByProduct(mfrId, productId).toString());
+		//XLog.stdout(usingJdbcTemplateOfficeService.retrieveByProduct(mfrId, productId).toString());
     	
     	return usingJdbcTemplateProductService.retrieveByProduct(mfrId, productId);
     }

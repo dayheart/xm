@@ -20,10 +20,10 @@ public class ProductController {
 	public String homePage(HttpServletRequest request, Model model) {
 		
 		String contextPath = request.getContextPath();
-		System.out.println(String.format("CONTEXT_PATH[%s]", contextPath));
+		//System.out.println(String.format("CONTEXT_PATH[%s]", contextPath));
 		model.addAttribute("context_path", contextPath);
 		
-		XLog.stdout(String.format("ESB_URI [%s]", tier.getEsbUri()));
+		//XLog.stdout(String.format("ESB_URI [%s]", tier.getEsbUri()));
 		
 		return "hello_products";
 	}

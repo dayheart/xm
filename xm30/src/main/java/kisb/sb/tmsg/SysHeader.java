@@ -655,10 +655,10 @@ public enum SysHeader {
 		try {
 			ip = InetAddress.getLocalHost();
 			
-			System.out.println(String.format("LOCALHOST_ADDR:[%s]", ip));
+			//System.out.println(String.format("LOCALHOST_ADDR:[%s]", ip));
 			ipstr = ip.getHostAddress();
 			NetworkInterface nic = NetworkInterface.getByInetAddress(ip);
-			System.out.println(String.format("LOCALHOST_NETIF:[%s]", nic));
+			//System.out.println(String.format("LOCALHOST_NETIF:[%s]", nic));
 			
 			byte[] mac = nic.getHardwareAddress();
 			// mac == null 127.0.0.1
