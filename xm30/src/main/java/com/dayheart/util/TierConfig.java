@@ -1,6 +1,7 @@
 package com.dayheart.util;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.Properties;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -536,7 +537,20 @@ public class TierConfig {
 	}
 	
 	
-	public String[] getUris(String tier) {
+	public String[] getUris(String TIER) {
+		
+		String uri = this.getUri(TIER.toUpperCase());
+		
+		if(uri.indexOf(",")>-1) {
+			return uri.split(",");
+		} else if(uri!=null) {
+			return new String[] { uri };
+		}
+		
+		return null;
+	}
+	
+	public String[] getUrisReflect(String tier) {
 		
 		tier = tier.toLowerCase();
 		

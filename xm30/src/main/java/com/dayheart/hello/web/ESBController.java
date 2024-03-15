@@ -43,7 +43,7 @@ public class ESBController {
 		
 	}
 	
-	@RequestMapping({"**/esb/json"})
+	@RequestMapping({"/esb/json"})
 	public void handleJsonRequest(@RequestBody Map<String, Object> sysHeader) {
 		XLog.stdout(String.format("MAP [%s]", sysHeader));
 		
@@ -51,7 +51,7 @@ public class ESBController {
 		XLog.stdout(String.format("MAP [%s]", sysHeader));
 	}
 	
-	@RequestMapping({"**/esb/octet-stream"})
+	@RequestMapping({"/esb/octet-stream"})
 	public void handleBytesRequest(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		byte[] bytesHeader = TCPClient.retrieveBodyToBytes(request.getInputStream());
 		XLog.stdout(String.format("BYTES [%s]", new String(bytesHeader)));

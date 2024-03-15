@@ -43,7 +43,7 @@ public class CORController {
 		
 	}
 	
-	@RequestMapping({"**/cor/json"})
+	@RequestMapping({"/cor/json"})
 	public void handleJsonRequest(@RequestBody Map<String, Object> sysHeader) {
 		XLog.stdout(String.format("MAP [%s]", sysHeader));
 		
@@ -51,7 +51,7 @@ public class CORController {
 		XLog.stdout(String.format("MAP [%s]", sysHeader));
 	}
 	
-	@RequestMapping({"**/cor/octet-stream"})
+	@RequestMapping({"/cor/octet-stream"})
 	public void handleBytesRequest(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		byte[] bytesHeader = TCPClient.retrieveBodyToBytes(request.getInputStream());
 		XLog.stdout(String.format("BYTES [%s]", new String(bytesHeader)));

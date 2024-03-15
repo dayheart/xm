@@ -68,9 +68,9 @@ public class ProductRestController {
 		if(tierConf.getMciProtocol().equalsIgnoreCase("http") || tierConf.getMciProtocol().equalsIgnoreCase("https")) {
 			url = tierConf.getMciProtocol() + "://" + tierConf.getMciHost() + ":" + tierConf.getMciPort();
 			
-			if(tierConf.getMciUris()!=null) {
-				int i = Utils.getRandomNumber(0, (tierConf.getMciUris().length));
-				String[] uris = tierConf.getMciUris();
+			if(tierConf.getUris("MCI")!=null) {
+				int i = Utils.getRandomNumber(0, (tierConf.getUris("MCI").length));
+				String[] uris = tierConf.getUris("MCI");
 				url += uris[i];
 				
 				String uri = uris[i];
