@@ -7,12 +7,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.Callable;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,18 +34,37 @@ import kisb.sb.tmsg.SysHeader;
 import kisb.sb.tmsg.TelegramMessageUtil;
 
 @Controller
-public class MCIController {
+@EnableAsync
+public class FEPController {
 	
 	private TransactionRamp txRamp = TransactionRamp.getInstance(false); // 싱글톤
 	
 	@Autowired
 	private TierConfig tierConfig;
 	
-	public MCIController() {
+	public FEPController() {
 		
 	}
 	
-	@RequestMapping({"/mci/json"})
+	/*
+	 * java.lang.IllegalStateException: Async support must be enabled on a servlet and for all filters involved in async request processing. This is done in Java code using the Servlet API or by adding "<async-supported>true</async-supported>" to servlet and filter declarations in web.xml.
+	org.springframework.util.Assert.state(Assert.java:385)
+	 */
+	@RequestMapping("/fep/callable")
+	public Callable<String> getMethodName() {
+		return new Callable<String>() {
+			
+			@Override
+			public String call() throws Exception {
+				XLog.stdout("ASYNC");
+				Thread.sleep(2000);
+				return "hello";
+			}
+		};
+	}
+	
+	
+	@RequestMapping({"/fep/json"})
 	public void handleJsonRequest(@RequestBody Map<String, Object> sysHeader) {
 		XLog.stdout(String.format("MAP [%s]", sysHeader));
 		
@@ -51,7 +72,7 @@ public class MCIController {
 		XLog.stdout(String.format("MAP [%s]", sysHeader));
 	}
 	
-	@RequestMapping({"/mci/octet-stream"})
+	@RequestMapping({"/fep/octet-stream"})
 	public void handleBytesRequest(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		byte[] bytesHeader = TCPClient.retrieveBodyToBytes(request.getInputStream());
 		XLog.stdout(String.format("BYTES [%s]", new String(bytesHeader)));
@@ -62,13 +83,13 @@ public class MCIController {
 	}
 	
 	private void executeRequest(Map<String, Object> sysHeader) {
-		String sysCd = "MCI"; //sysCd(3) PRD, OFC, SAL, ORD, CST
+		String sysCd = "FEP"; //sysCd(3) PRD, OFC, SAL, ORD, CST
 		// SYNC | ASYNC 세팅, 이후 전문에서 지속... 최종 FEP 에서 사용
 		String sync = "S";
 		SysHeader.setTRMST(sysHeader, sysCd, "S", sync); // Send/Recv, Sync/Async
 		
-		String egress = tierConfig.getEgress("MCI");
-		String out = tierConfig.getOut("MCI");
+		String egress = tierConfig.getEgress("FEP");
+		String out = tierConfig.getOut("FEP");
 		if(egress!=null) {
 			String[] outlets = egress.split(",");
 			String url;
@@ -110,52 +131,10 @@ public class MCIController {
 					responseStr = new String( TCPClient.executeBytesByApacheHttpClient(url, "POST", SysHeader.toBytes(sysHeader)));
 				}
 				
-				XLog.stdout("MCI_OUT_URL: " + url);
+				XLog.stdout("FEP_OUT_URL: " + url);
 				
 			}
 		}
-	}
-	
-	
-	//@RequestMapping({"/**"})
-	@RequestMapping({"**/mcin/**"})
-	public void handleRequest(HttpServletRequest request, HttpServletResponse response) throws IOException {
-		String path = (String)request.getAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE);
-		XLog.stdout(String.format("PATH [%s]", path));
-
-		
-		String contentType = request.getContentType();
-		XLog.stdout(String.format("CONTENT-TYPE [%s]", contentType));
-		
-		if(contentType!=null) {
-			
-			byte[] rcv_sysHeader = null;
-			
-			byte[] b_body = TCPClient.retrieveBodyToBytes(request.getInputStream());
-			XLog.stdout(String.format("b_body[%s]", new String(b_body)));
-			
-			if( contentType.equalsIgnoreCase("application/json") ) {
-				rcv_sysHeader = SysHeader.toBytes(SysHeader.flatJson(new String(b_body)));
-				
-				SysHeader.toBytesPretty(new String(b_body));
-				
-			} else if(contentType.equalsIgnoreCase("application/octet-stream")) {
-				rcv_sysHeader = new byte[b_body.length];
-				System.arraycopy(b_body, 0, rcv_sysHeader, 0, b_body.length);
-				
-				XLog.stdout("OCTET-STREAM [" + new String(rcv_sysHeader) + "], len:" + rcv_sysHeader.length);
-			} else if(contentType.equalsIgnoreCase("application/xml")) {
-				rcv_sysHeader = b_body;
-			} else if(contentType.equalsIgnoreCase("text/html")) {
-				
-			} else {
-				; // and so on
-			}
-			
-			
-			
-		} // end of contentType
-		
 	}
 
 }
