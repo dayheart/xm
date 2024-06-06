@@ -69,7 +69,7 @@ public class CORController {
 		
 		String egress = tierConfig.getEgress("COR");
 		String out = tierConfig.getOut("COR");
-		if(egress!=null) {
+		if(egress!=null && egress.length()>0) {
 			String[] outlets = egress.split(",");
 			String url;
 			String protocol;

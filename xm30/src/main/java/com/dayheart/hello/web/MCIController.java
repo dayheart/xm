@@ -69,7 +69,7 @@ public class MCIController {
 		
 		String egress = tierConfig.getEgress("MCI");
 		String out = tierConfig.getOut("MCI");
-		if(egress!=null) {
+		if(egress!=null && egress.length()>0) {
 			String[] outlets = egress.split(",");
 			String url;
 			String protocol;

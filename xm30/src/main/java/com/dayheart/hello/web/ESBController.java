@@ -69,7 +69,7 @@ public class ESBController {
 		
 		String egress = tierConfig.getEgress("ESB");
 		String out = tierConfig.getOut("ESB");
-		if(egress!=null) {
+		if(egress!=null && egress.length()>0) {
 			String[] outlets = egress.split(",");
 			String url;
 			String protocol;

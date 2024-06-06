@@ -90,7 +90,7 @@ public class FEPController {
 		
 		String egress = tierConfig.getEgress("FEP");
 		String out = tierConfig.getOut("FEP");
-		if(egress!=null) {
+		if(egress!=null && egress.length()>0) {
 			String[] outlets = egress.split(",");
 			String url;
 			String protocol;

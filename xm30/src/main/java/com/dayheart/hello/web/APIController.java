@@ -90,7 +90,7 @@ public class APIController {
 		
 		String egress = tierConfig.getEgress("API");
 		String out = tierConfig.getOut("API");
-		if(egress!=null) {
+		if(egress!=null && egress.length()>0) {
 			String[] outlets = egress.split(",");
 			String url;
 			String protocol;

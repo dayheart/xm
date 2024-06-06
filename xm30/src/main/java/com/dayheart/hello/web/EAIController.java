@@ -91,7 +91,7 @@ public class EAIController {
 		
 		String egress = tierConfig.getEgress("EAI");
 		String out = tierConfig.getOut("EAI");
-		if(egress!=null) {
+		if(egress!=null && egress.length()>0) {
 			String[] outlets = egress.split(",");
 			String url;
 			String protocol;
