@@ -72,8 +72,8 @@ function callProduct(mfrId, productId, the_uri, callback=responseHandler) {
 
 	xhr.setRequestHeader("Accept", "application/json");
 	xhr.setRequestHeader("Content-Type", "application/json");
-	xhr.setRequestHeader("mfr_id", mfrId);
-	xhr.setRequestHeader("product_id", productId);
+	xhr.setRequestHeader("mfr-id", mfrId);
+	xhr.setRequestHeader("product-id", productId);
 
 	// controllers.js:53  Uncaught DOMException: Failed to set the 'responseType' property on 'XMLHttpRequest': 
 	//The response type cannot be changed for synchronous requests made from a document.

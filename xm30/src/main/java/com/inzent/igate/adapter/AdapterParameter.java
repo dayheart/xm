@@ -7,6 +7,14 @@ public class AdapterParameter {
 	
 	private Map<Object, Object> data = new HashMap<Object, Object>();
 	
+	public void put(Object key, Object val) {
+		data.put(key, val);
+	}
+	
+	public Object get(Object key) {
+		return data.get(key);
+	}
+	
 	public Object getRequestData() {
 		return data.get("request.data");
 	}

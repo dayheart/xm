@@ -23,6 +23,8 @@ public class IGateException extends Exception {
 		//super(MessageGenerator.getMessage(s1, s2, strings), t);
 		this.uuid = UUID.randomUUID().toString();
 		this.code = code;
+		
+		
 	}
 
 }

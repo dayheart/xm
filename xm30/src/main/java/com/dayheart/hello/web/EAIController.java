@@ -102,6 +102,7 @@ public class EAIController {
 			for(String outlet:outlets) {
 				//XLog.stdout(String.format("EGRESS[%d]:%s", i++, outlet));
 				switch(outlet) {
+				/* 2025.03.10 
 				case "ESB" :
 					SysHeader.setINFC(sysHeader, "OFFICES", "N", "", SysHeader.TMSG_SVC_ID.getField(sysHeader)); // INFC_ID(part), SVC_ID(eng)
 					break;
@@ -113,6 +114,18 @@ public class EAIController {
 					break;
 				default :
 					SysHeader.setINFC(sysHeader, "SALESREPS", "N", "", SysHeader.TMSG_SVC_ID.getField(sysHeader)); // INFC_ID(part), SVC_ID(eng)
+				*/
+				case "ESB" :
+					SysHeader.setINFC(sysHeader, "OFFICES", "N", SysHeader.TMSG_APP_ID.getField(sysHeader), SysHeader.TMSG_SVC_ID.getField(sysHeader)); // INFC_ID(part), SVC_ID(eng)
+					break;
+				case "COR" :
+					SysHeader.setINFC(sysHeader, "ORDERS", "N", SysHeader.TMSG_APP_ID.getField(sysHeader), SysHeader.TMSG_SVC_ID.getField(sysHeader)); // INFC_ID(part), SVC_ID(eng)
+					break;
+				case "FEP" :
+					SysHeader.setINFC(sysHeader, "CUSTOMERS", "N", SysHeader.TMSG_APP_ID.getField(sysHeader), SysHeader.TMSG_SVC_ID.getField(sysHeader)); // INFC_ID(part), SVC_ID(eng)
+					break;
+				default :
+					SysHeader.setINFC(sysHeader, "SALESREPS", "N", SysHeader.TMSG_APP_ID.getField(sysHeader), SysHeader.TMSG_SVC_ID.getField(sysHeader)); // INFC_ID(part), SVC_ID(eng)
 				}
 				
 				protocol = tierConfig.getProtocol(outlet.toUpperCase());

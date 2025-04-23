@@ -4,7 +4,10 @@ import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.net.UnknownHostException;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -347,7 +350,11 @@ public enum SysHeader {
 	}
 	
 	public static byte[] toBytes(Map<String, ?> map) {
-		byte[] rt = new byte[SysHeader.getLength()];
+		byte[] rt = new byte[SYS_HEADER_LENGTH];
+		ByteBuffer bf = ByteBuffer.allocate(SYS_HEADER_LENGTH);
+		bf.order(ByteOrder.LITTLE_ENDIAN);
+		byte whitespace = (byte)32;
+		Arrays.fill(rt, whitespace);
 		
 		for(SysHeader field : SysHeader.values()) {
 			Object value = map.get(field.name());
@@ -360,9 +367,9 @@ public enum SysHeader {
 					str = value.toString();
 				}
 				
-				if(str!=null)
+				if(str!=null) {
 					System.arraycopy(str.getBytes(), 0, rt, field.offset, str.getBytes().length);
-				
+				}
 			}
 		}
 		
@@ -490,8 +497,9 @@ public enum SysHeader {
 			System.arraycopy(field, 0, data, offset, len);
 	}
 	
-	public void setField(Object ojb, Map<String, Object> map) {
-		map.put(this.name(), ojb);
+	public void setField(Object obj, Map<String, Object> map) {
+		map.put(this.name(), obj);
+		XLog.stdout("SET [" + this.name() + ", " + map.get(this.name()) + "]");
 	}
 	
 	
@@ -582,7 +590,7 @@ public enum SysHeader {
 		String FIRST_TMSG_CRT_DT = sdf.format(date); // 최초 전문 생성 일시
 		String TMSG_CRT_ENVR_INFO_SECD = envCd;
 		String TMSG_CRT_SNO = String.format("%016d", sno);
-		String TMSG_PRG_NO = "001";
+		String TMSG_PRG_NO = "000";
 		String OGTRAN_GUID = TMSG_CRT_LINK_SYS_SECD + FIRST_TMSG_CRT_DT + TMSG_CRT_ENVR_INFO_SECD + TMSG_CRT_SNO + TMSG_PRG_NO ;
 		
 		SysHeader.TMSG_CRT_LINK_SYS_SECD.setField(TMSG_CRT_LINK_SYS_SECD, map);
@@ -634,10 +642,10 @@ public enum SysHeader {
 		String FIRST_UUID = UUID.randomUUID().toString();
 		
 		SysHeader.TMSG_DMND_IPADR.setField(TMSG_DMND_IPADR.getBytes(), telegram);
-		SysHeader.TMSG_DMND_MADR.setField(TMSG_DMND_MADR.getBytes(), telegram);
+		SysHeader.TMSG_DMND_MADR.setField(TMSG_DMND_MADR.getBytes(), telegram); // 2025.03.21 for C
 		SysHeader.FIRST_DMND_LINK_SYS_SECD.setField(FIRST_DMND_LINK_SYS_SECD.getBytes(), telegram);
 		SysHeader.FIRST_TMSG_DMND_DT.setField(FIRST_TMSG_DMND_DT.getBytes(), telegram);
-		SysHeader.FIRST_UUID.setField(FIRST_UUID.getBytes(), telegram);		
+		SysHeader.FIRST_UUID.setField(FIRST_UUID.getBytes(), telegram);  // 2025.03.21 for C
 	}
 	
 	/**
@@ -683,10 +691,10 @@ public enum SysHeader {
 		String FIRST_UUID = UUID.randomUUID().toString();
 		
 		SysHeader.TMSG_DMND_IPADR.setField(TMSG_DMND_IPADR, map);
-		SysHeader.TMSG_DMND_MADR.setField(TMSG_DMND_MADR, map);
+		SysHeader.TMSG_DMND_MADR.setField(TMSG_DMND_MADR, map); // 2025.03.21 for C
 		SysHeader.FIRST_DMND_LINK_SYS_SECD.setField(FIRST_DMND_LINK_SYS_SECD, map);
 		SysHeader.FIRST_TMSG_DMND_DT.setField(FIRST_TMSG_DMND_DT, map);
-		SysHeader.FIRST_UUID.setField(FIRST_UUID, map);	
+		SysHeader.FIRST_UUID.setField(FIRST_UUID, map);	 // 2025.03.21 for C
 	}
 	
 	
@@ -716,7 +724,7 @@ public enum SysHeader {
 		String TMSG_TRSMT_DT = sdf.format(date);
 		
 		SysHeader.TRSMT_LINK_SYS_SECD.setField(TRSMT_LINK_SYS_SECD.getBytes(), telegram);
-		SysHeader.TRSMT_NODE_NO.setField(TRSMT_NODE_NO.getBytes(), telegram);
+		SysHeader.TRSMT_NODE_NO.setField(TRSMT_NODE_NO.getBytes(), telegram); // 2025.03.21 for C
 		SysHeader.DMND_RSPNS_SECD.setField(DMND_RSPNS_SECD.getBytes(), telegram);
 		SysHeader.TMSG_SYNCZ_SECD.setField(TMSG_SYNCZ_SECD.getBytes(), telegram);
 		SysHeader.TMSG_TRSMT_DT.setField(TMSG_TRSMT_DT.getBytes(), telegram);
@@ -749,7 +757,7 @@ public enum SysHeader {
 		String TMSG_TRSMT_DT = sdf.format(date);
 		
 		SysHeader.TRSMT_LINK_SYS_SECD.setField(TRSMT_LINK_SYS_SECD, map);
-		SysHeader.TRSMT_NODE_NO.setField(TRSMT_NODE_NO, map);
+		SysHeader.TRSMT_NODE_NO.setField(TRSMT_NODE_NO, map); // 2025.03.21 for C
 		SysHeader.DMND_RSPNS_SECD.setField(DMND_RSPNS_SECD, map);
 		SysHeader.TMSG_SYNCZ_SECD.setField(TMSG_SYNCZ_SECD, map);
 		SysHeader.TMSG_TRSMT_DT.setField(TMSG_TRSMT_DT, map);

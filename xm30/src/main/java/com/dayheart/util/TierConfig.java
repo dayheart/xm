@@ -147,6 +147,30 @@ public class TierConfig {
 	@Value("${API.EGRESS}")
 	private String apiEgress;
 	
+
+	// 2025.03.24
+	@Value("${IGT.PROTOCOL}")
+	private String igtProtocol;
+	
+	//@Value("#{tier['IGT.HOST']}")
+	@Value("${IGT.HOST}")
+	private String igtHost;
+	
+	//@Value("#{tier['IGT.PORT']}")
+	@Value("${IGT.PORT}")
+	private int igtPort;
+	
+	@Value("${IGT.URI}")
+	private String igtUri;
+	private String[] igtUris = null;
+	
+	//@Value("#{tier['IGT.OUT']}")
+	@Value("${IGT.OUT}")
+	private String igtOut;
+	
+	@Value("${IGT.EGRESS}")
+	private String igtEgress;
+	
 	
 	private Properties props = System.getProperties();
 	
@@ -404,6 +428,9 @@ public class TierConfig {
 		case "FEP" :
 			tiervalue = this.fepProtocol;
 			break;
+		case "IGT" :
+			tiervalue = this.igtProtocol;
+			break;
 		default :
 			tiervalue = this.mciProtocol;
 			break;
@@ -437,6 +464,9 @@ public class TierConfig {
 		case "FEP" :
 			tiervalue = this.fepHost;
 			break;
+		case "IGT" :
+			tiervalue = this.igtHost;
+			break;
 		default :
 			tiervalue = this.mciHost;
 			break;
@@ -469,6 +499,9 @@ public class TierConfig {
 			break;
 		case "FEP" :
 			tiervalue = this.fepPort;
+			break;
+		case "IGT" :
+			tiervalue = this.igtPort;
 			break;
 		default :
 			tiervalue = this.mciPort;
@@ -523,6 +556,9 @@ public class TierConfig {
 			break;
 		case "FEP" :
 			tiervalue = this.fepUri;
+			break;
+		case "IGT" :
+			tiervalue = this.igtUri;
 			break;
 		default :
 			tiervalue = this.mciUri;

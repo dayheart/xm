@@ -48,7 +48,8 @@ public class ProductRestController {
     @RequestMapping("/api/product")
     //public Product retrieveByProduct(@RequestHeader(HttpHeaders.ACCEPT_LANGUAGE) String language) {
     //public ResponseEntity<Product> retrieveByProduct(@RequestHeader("mfr_id") String mfrId, @RequestHeader("product_id") String productId) {
-    public List<Map<String, ?>> retrieveByProduct(@RequestHeader("mfr_id") String mfrId, @RequestHeader("product_id") String productId) {
+    // nginx underscores_in_headers off;
+    public List<Map<String, ?>> retrieveByProduct(@RequestHeader("mfr-id") String mfrId, @RequestHeader("product-id") String productId) {
     	
     	Map<String, Object> sysHeader = new HashMap<String, Object>();
     	String sysCd = "PRD"; //sysCd(3) PRD, OFC, SAL, ORD, CST
@@ -60,7 +61,9 @@ public class ProductRestController {
 		SysHeader.setTRMST(sysHeader, sysCd, "S", sync); // Send/Recv, Sync/Async
 		
 		//SysHeader.setINFC(sysHeader, String.format("%s-%s", mfrId, productId), "N", "", String.format("%s-%s", mfrId, productId)); // INFC_ID(part), SVC_ID(eng)
-		SysHeader.setINFC(sysHeader, "OFFICES", "N", "", String.format("%s-%s", mfrId, productId)); // INFC_ID(part), SVC_ID(eng)
+		//SysHeader.setINFC(sysHeader, "OFFICES", "N", "", String.format("%s-%s", mfrId, productId)); // INFC_ID(part), SVC_ID(eng)
+		// 2025.03.10 changing for Tmax5_tcpgw_outbound
+		SysHeader.setINFC(sysHeader, "OFFICES", "N", mfrId, productId);
 		
 		//System.out.println( Thread.currentThread().getStackTrace()[1] + " : " + "[" + new String( SysHeader.toBytes(header))  + "]");
 		String url = null;

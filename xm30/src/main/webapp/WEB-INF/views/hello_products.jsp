@@ -7,8 +7,10 @@
 <meta http-equiv="X-UX-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Hello Products</title>
+<!-- script
+	src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.1/angular.js"></script -->
 <script
-	src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.1/angular.js"></script>
+	src="${context_path}/js/angular.js"></script>
 <script src="${pageContext.request.servletContext.contextPath }/js/utils.js"></script>
 <script src="${context_path}/js/utils.js"></script>
 <script src="${context_path}/js/hello.js"></script>

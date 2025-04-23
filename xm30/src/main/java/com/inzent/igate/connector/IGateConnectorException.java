@@ -22,5 +22,11 @@ public class IGateConnectorException extends IGateException {
 		this.adapterId = con.getAdapterId();
 		this.connectorId = con.getId();
 	}
+	
+	public IGateConnectorException() {
+		systemId = null;
+		adapterId = null;
+		connectorId = null;
+	}
 
 }
