@@ -9,6 +9,16 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class TierConfig {
+	@Value("${DAYHEART.ROLE}")
+	private String role;
+	
+	public String getRole() {
+		return role;
+	}
+
+	public void setRole(String role) {
+		this.role = role;
+	}
 	
 	@Value("${MCI.PROTOCOL}")
 	private String mciProtocol;

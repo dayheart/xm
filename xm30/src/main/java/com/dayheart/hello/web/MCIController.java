@@ -31,6 +31,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.HandlerMapping;
 
+import com.dayheart.hello.kafka.KafkaProducer;
 import com.dayheart.tcp.TCPClient;
 import com.dayheart.tmsg.TransactionRamp;
 import com.dayheart.util.TierConfig;
@@ -52,6 +53,10 @@ public class MCIController {
 	@Autowired
 	private TierConfig tierConfig;
 	
+	// 2025.04.29 현대차증권 테스트
+	@Autowired
+	private KafkaProducer producer;
+	
 	public MCIController() {
 		
 	}
@@ -61,7 +66,7 @@ public class MCIController {
 		XLog.stdout(String.format("MAP [%s]", sysHeader));
 		
 		executeRequest(sysHeader);
-		XLog.stdout(String.format("MAP [%s]", sysHeader));
+		//XLog.stdout(String.format("MAP [%s]", sysHeader));
 	}
 	
 	@RequestMapping({"/mci/octet-stream"})
@@ -263,7 +268,6 @@ public class MCIController {
 				
 				
 				XLog.stdout("MCI_OUT_URL: " + url);
-				
 			}
 		}
 	}
@@ -357,6 +361,8 @@ public class MCIController {
 					}
 					
 					XLog.stdout("MCI_OUT_URL: " + url);
+				} else if(protocol!=null && protocol.equals("kafka")) {
+					producer.sendMessage(SysHeader.toJsonString(sysHeader));
 				}
 				/*
 				Socket socket = null;
