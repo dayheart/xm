@@ -66,7 +66,39 @@ function RCloud(color) {
     this.scaleY= 1;
     this.color = (color===undefined)?"#ffffff":utils.parseColor(color);
     this.lineWidth = 0.5;
+
+    this.context;
+    this.elementId;
 }
+
+
+RCloud.prototype.draw0 = function() {
+
+    this.context.save();
+    
+    this.context.translate(this.x, this.y);
+    this.context.rotate(this.rotation);
+    this.context.scale(this.scaleX, this.scaleY);
+    
+    this.context.lineWidth = this.lineWidth;
+    this.context.fillStyle = this.color;
+
+    var region = new Path2D();
+    region.arc(5, 15, 5, 0, Math.PI*2, false);
+    region.arc(13, 10, 7, 0, Math.PI*2, false);
+    region.arc(25, 10, 10, 0, Math.PI*2, false);
+    region.arc(35, 15, 5, 0, Math.PI*2, false);
+    region.rect(5, 10, 30, 10);
+    this.context.clip(region);
+    
+    this.context.rect(0, 0, this.width, this.height);
+    this.context.fill();
+    //context.closePath();
+    
+    this.context.restore();
+
+};
+
 
 RCloud.prototype.draw = function(context) {
 

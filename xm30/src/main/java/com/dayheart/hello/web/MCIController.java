@@ -362,7 +362,7 @@ public class MCIController {
 					
 					XLog.stdout("MCI_OUT_URL: " + url);
 				} else if(protocol!=null && protocol.equals("kafka")) {
-					producer.sendMessage(SysHeader.toJsonString(sysHeader));
+					producer.sendMessage(outlet.toUpperCase(), SysHeader.toJsonString(sysHeader));
 				}
 				/*
 				Socket socket = null;
